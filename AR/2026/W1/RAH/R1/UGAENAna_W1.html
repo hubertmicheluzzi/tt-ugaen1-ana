@@ -96,6 +96,16 @@
   tr.abst td{color:var(--red);}
   tr.abst{background:rgba(248,113,113,.05);}
   .pstat .pv[style*="--bright"]{color:var(--bright);}
+  /* Mobile-Fix: Grid-Kinder dürfen schrumpfen, breite Tabellen scrollen innerhalb der Karte */
+  .container>*{min-width:0;}
+  .card-body{overflow-x:auto;}
+  @media(max-width:700px){
+    .container{padding:16px 12px;gap:22px;}
+    .card-body{padding:12px;}
+    th,td{padding:6px 8px;}
+    .big-score{flex-wrap:wrap;}
+    .next-teams{font-size:17px;}
+  }
 
 </style>
 </head>
