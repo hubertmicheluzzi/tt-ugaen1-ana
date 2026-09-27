@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>REAna – Regelwerk 2. Herren-Bundesliga</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+  :root {
+    --bg:#0d0f14; --bg2:#13161e; --bg3:#1a1f2b; --border:#2a3040;
+    --acc:#4a9eff; --green:#4ade80; --yellow:#fbbf24; --red:#f87171;
+    --orange:#fb923c; --text:#e2e8f0; --dim:#7a8899; --bright:#ffffff;
+    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;}
+  .container{max-width:1100px;margin:0 auto;padding:28px 24px;display:grid;gap:28px;}
+  .section-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title{font-weight:600;font-size:14px;color:var(--bright);}
+  .card-body{padding:18px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  .big-score{display:flex;align-items:center;justify-content:center;gap:24px;padding:20px 0;}
+  .big-score .team{font-size:15px;font-weight:600;color:var(--bright);text-align:center;flex:1;}
+  .big-score .team.su9{color:var(--acc);}
+  .big-score .score{font-family:var(--mono);font-size:48px;font-weight:600;}
+  .big-score .score.w{color:var(--green);}
+  .big-score .score.d{color:var(--yellow);}
+  .big-score .score.l{color:var(--red);}
+  .big-score .meta{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;margin-top:4px;}
+  .stat-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat-chip{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px 14px;font-family:var(--mono);}
+  .stat-chip .n{color:var(--dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:3px;}
+  .stat-chip .v{color:var(--bright);font-size:15px;font-weight:600;}
+  .analysis{background:rgba(74,158,255,.05);border:1px solid rgba(74,158,255,.2);border-radius:4px;padding:14px 16px;font-size:13px;line-height:1.8;}
+  .analysis strong{color:var(--acc);}
+  .analysis .warn{color:var(--yellow);font-weight:600;}
+  .analysis .good{color:var(--green);font-weight:600;}
+  .analysis .bad{color:var(--red);font-weight:600;}
+  .analysis .orange{color:var(--orange);font-weight:600;}
+  .games-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:10px;}
+  .game-cell{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 8px;}
+  .game-cell .gid{font-family:var(--mono);color:var(--dim);font-size:9px;display:block;margin-bottom:2px;}
+  .game-cell .gplayer{color:var(--text);font-size:10px;display:block;margin-bottom:3px;line-height:1.3;}
+  .game-cell .gresult{font-family:var(--mono);font-weight:600;font-size:12px;}
+  .game-cell .gresult.w{color:var(--green);}
+  .game-cell .gresult.l{color:var(--red);}
+  .game-cell .gresult.wo{color:var(--yellow);}
+  .game-cell.doppel{background:rgba(74,158,255,.07);border-color:rgba(74,158,255,.3);}
+  .game-cell.inactive{opacity:.35;}
+  .player-card{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:14px;}
+  .player-name{font-weight:600;font-size:14px;color:var(--bright);margin-bottom:2px;}
+  .player-sub{font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:10px;}
+  .pstats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+  .pstat .pn{font-family:var(--mono);font-size:9px;color:var(--dim);display:block;}
+  .pstat .pv{font-family:var(--mono);font-size:16px;font-weight:600;}
+  .pbar{height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin-bottom:6px;}
+  .pbar-fill{height:100%;border-radius:2px;}
+  .perf-detail{font-size:11px;color:var(--dim);line-height:1.5;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{padding:8px 12px;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:8px 12px;border-bottom:1px solid rgba(42,48,64,.4);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr.su9-row{background:rgba(74,158,255,.08);}
+  tr.su9-row td{color:var(--bright);}
+  tr.hl{background:rgba(251,191,36,.06);}
+  .match-list{list-style:none;display:grid;gap:8px;}
+  .match-item{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:12px 16px;}
+  .match-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;}
+  .match-runde{font-family:var(--mono);font-size:10px;color:var(--dim);}
+  .match-teams{font-weight:600;font-size:13px;color:var(--bright);flex:1;}
+  .match-score{font-family:var(--mono);font-size:17px;font-weight:600;}
+  .match-score.w{color:var(--green);}
+  .match-score.d{color:var(--yellow);}
+  .match-score.l{color:var(--red);}
+  .match-note{font-size:11px;color:var(--dim);}
+  .next-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-radius:6px;padding:20px;}
+  .next-label{font-family:var(--mono);font-size:11px;color:var(--yellow);letter-spacing:.1em;margin-bottom:10px;}
+  .next-teams{font-size:20px;font-weight:700;color:var(--bright);margin-bottom:4px;}
+  .next-meta{font-family:var(--mono);font-size:12px;color:var(--dim);}
+  footer{text-align:center;padding:20px;font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--border);margin-top:10px;}
+  .bs-team{font-size:16px;font-weight:700;color:var(--dim);}
+  .bs-team.su9{color:var(--acc);}
+  .bs-score{font-family:var(--mono);font-size:44px;font-weight:700;line-height:1.1;}
+  .bs-sub{font-size:11px;color:var(--dim);}
+  .games-grid{grid-template-columns:repeat(5,1fr);}
+  @media(max-width:700px){.games-grid{grid-template-columns:repeat(2,1fr);}.big-score{gap:12px;}.bs-score{font-size:34px;}}
+  .lineup{font-size:12px;color:var(--dim);margin-bottom:8px;font-family:var(--mono);}
+  .note,.legend{font-size:11px;color:var(--dim);margin-top:8px;}
+  .mono{font-family:var(--mono);}
+  .small{font-size:12px;color:var(--dim);}
+  .tscroll{overflow-x:auto;}
+  tr.abst td{color:var(--red);}
+  tr.abst{background:rgba(248,113,113,.05);}
+  .pstat .pv[style*="--bright"]{color:var(--bright);}
+  /* Mobile-Fix: Grid-Kinder dürfen schrumpfen, breite Tabellen scrollen innerhalb der Karte */
+  .container>*{min-width:0;}
+  .card-body{overflow-x:auto;}
+  @media(max-width:700px){
+    .container{padding:16px 12px;gap:22px;}
+    .card-body{padding:12px;}
+    th,td{padding:6px 8px;}
+    .big-score{flex-wrap:wrap;}
+    .next-teams{font-size:17px;}
+  }
+
+  .rule-block{background:var(--bg3);border-left:3px solid var(--acc);border-radius:3px;padding:10px 14px;margin-bottom:10px;font-size:13px;}
+  .rule-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--acc);margin-bottom:4px;}
+  .ranking-step{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,48,64,.4);font-size:13px;}
+  .ranking-step:last-child{border-bottom:none;}
+  .step-num{font-family:var(--mono);color:var(--acc);font-weight:600;min-width:18px;}
+  .para{font-family:var(--mono);font-size:10px;color:var(--dim);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 6px;margin-left:auto;}
+  .diff-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-radius:4px;padding:12px 14px;font-size:13px;line-height:1.7;margin-top:12px;}
+  .diff-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--yellow);margin-bottom:4px;}
+  .check{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.3);}
+  .check .diff-label{color:var(--red);}
+  .url-list{list-style:none;display:grid;gap:6px;font-size:13px;}
+  .url-label{display:inline-block;min-width:92px;font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;}
+  a{color:var(--acc);text-decoration:none;} a:hover{text-decoration:underline;}
+  td.c,th.c{text-align:center;}
+
+</style>
+</head>
+<body>
+<div class="container">
+<!-- ══════════ 01 ══════════ -->
+<div>
+<div class="section-label">01 — Punktesystem</div>
+<div class="card"><div class="card-header"><span class="card-title">Mannschaftspunkte · 2. Bundesliga im Vergleich</span><span class="para">§ 5 · § 4</span></div><div class="card-body">
+<div class="tscroll"><table>
+<thead><tr><th>Ergebnis</th><th>2. Bundesliga</th><th>WTTV</th><th>VÖB</th></tr></thead>
+<tbody>
+<tr><td>Sieg</td><td class="mono" style="color:var(--green)"><strong>3</strong></td><td class="mono">2</td><td class="mono">3</td></tr>
+<tr><td>Unentschieden 5:5</td><td class="mono" style="color:var(--yellow)"><strong>2</strong></td><td class="mono">1</td><td class="mono">1</td></tr>
+<tr><td>Niederlage</td><td class="mono" style="color:var(--acc)"><strong>1</strong> (Antrittspunkt)</td><td class="mono">0</td><td class="mono">0</td></tr>
+<tr><td>Nicht angetreten</td><td class="mono" style="color:var(--red)"><strong>0</strong></td><td class="mono">0</td><td class="mono">0</td></tr>
+</tbody></table></div>
+<div class="diff-box"><div class="diff-label">▲ ANALYSEHINWEIS</div>
+Durch den Antrittspunkt bringt jedes gespielte Match mindestens 1 Punkt. Entscheidend ist deshalb der <strong>Abstand zwischen den Ergebnissen</strong>: Sieg statt Niederlage = +2, Remis statt Niederlage = +1. Ein Remis ist 2/3 eines Sieges wert (WTTV 1/2, VÖB 1/3). Die Tabelle bleibt dadurch lange eng beisammen — Punkte­gleichstände sind häufig, das <strong>Spielverhältnis</strong> (→ 05) wird oft entscheidend.
+</div></div></div>
+</div>
+<!-- ══════════ 02 ══════════ -->
+<div>
+<div class="section-label">02 — Spielsystem &amp; Spielreihenfolge</div>
+<div class="card"><div class="card-header"><span class="card-title">3 Spieler · 9 Einzel + 1 Doppel · 2 Tische</span><span class="para">§ 5.2</span></div><div class="card-body">
+<div class="tscroll"><table>
+<thead><tr><th class="c">Spiel</th><th class="c">Heim</th><th class="c">Gast</th><th>WTTV/VÖB zum Vergleich</th></tr></thead>
+<tbody>
+<tr><td class="c mono">1</td><td class="c">A1</td><td class="c">B1</td><td class="small">I · A–1</td></tr>
+<tr><td class="c mono">2</td><td class="c">A2</td><td class="c">B2</td><td class="small">II · B–2</td></tr>
+<tr><td class="c mono">3</td><td class="c" style="color:var(--yellow)">A3 (U23)</td><td class="c" style="color:var(--yellow)">B3 (U23)</td><td class="small">III · C–3</td></tr>
+<tr><td class="c mono">4</td><td class="c">A2</td><td class="c">B1</td><td class="small">IIIa · Doppel (A+C : 1+3)</td></tr>
+<tr><td class="c mono">5</td><td class="c">A1</td><td class="c">B3</td><td class="small">IV · A–2</td></tr>
+<tr><td class="c mono">6</td><td class="c">A3</td><td class="c">B2</td><td class="small">V · C–1</td></tr>
+<tr><td class="c mono">7</td><td class="c">A2</td><td class="c">B3</td><td class="small">VI · B–3</td></tr>
+<tr><td class="c mono">8</td><td class="c">A3</td><td class="c">B1</td><td class="small">VII · C–2</td></tr>
+<tr><td class="c mono">9</td><td class="c">A1</td><td class="c">B2</td><td class="small">VIII · A–3</td></tr>
+<tr style="background:rgba(74,158,255,.07)"><td class="c mono">10</td><td class="c" colspan="2"><strong>Doppel</strong></td><td class="small">IX · B–1</td></tr>
+</tbody></table></div>
+<div style="margin-top:12px"><div class="ranking-step"><span class="step-num">!</span><span><strong>Endstand:</strong> Das Match endet mit dem <strong>6. Siegpunkt</strong> — mögliche Ergebnisse 6:0, 6:1, 6:2, 6:3, 6:4 oder 5:5. Anders als im WTTV/VÖB gibt es <strong>kein</strong> „6:0 → noch 1 Spiel".</span></div><div class="ranking-step"><span class="step-num">!</span><span><strong>Doppel am Schluss:</strong> Das Doppel ist Spiel 10 und wird nur gespielt, wenn nach 9 Einzeln keine Mannschaft 6 Siege hat — es entscheidet dann über Sieg oder Remis.</span></div><div class="ranking-step"><span class="step-num">!</span><span><strong>Positionen:</strong> A = Heim (senkrecht), B = Gast (waagrecht) — im Spielbericht fix, anders als die willkürlichen A/B/C–1/2/3 im WTTV/VÖB.</span></div><div class="ranking-step"><span class="step-num">!</span><span><strong>2 Tische</strong> gleichzeitig (bei Einigung beider Teams auch 1 Tisch möglich).</span></div></div></div></div>
+</div>
+<!-- ══════════ 03 ══════════ -->
+<div>
+<div class="section-label">03 — Nachwuchsregel · U23-Pflicht</div>
+<div class="card"><div class="card-header"><span class="card-title">Mindestens 1 U23-Spieler auf Position A3/B3</span><span class="para">§ 9</span></div><div class="card-body"><div class="ranking-step"><span class="step-num">1.</span><span>Pflicht: mindestens <strong>1 Spieler der U23-Klasse</strong> (ÖTTV-Handbuch C § 41 Abs. 7), der grundsätzlich für die <strong>österreichische Nationalmannschaft spielberechtigt</strong> ist.</span></div><div class="ranking-step"><span class="step-num">2.</span><span>Der Nachwuchsspieler muss auf <strong>Position A3 bzw. B3</strong> eingesetzt werden.</span></div><div class="ranking-step"><span class="step-num">3.</span><span>Nachwuchsspieler nach Handbuch C § 43b dürfen auf beliebiger Position spielen, solange ein anderer regelkonformer U23-Spieler auf A3/B3 steht.</span></div>
+<div class="diff-box check"><div class="diff-label">✗ SANKTION</div>
+Kein U23-Spieler eingesetzt <strong>oder</strong> U23-Spieler nicht auf A3/B3 → Match wird <strong>0:6 strafverifiziert</strong>. Die Mannschaft erhält trotzdem <strong>1 Antrittspunkt</strong>.</div>
+<div class="rule-block" style="margin-top:12px"><div class="rule-title">AUSNAHME</div>
+In Ausnahmefällen (Krankheit, gewichtige Gründe …) darf eine Mannschaft in <strong>maximal 4 Spielen des Grunddurchgangs mit nur 2 Spielern</strong> antreten, ohne Nachwuchsspieler und ohne Strafverifizierung.</div>
+<div class="rule-block"><div class="rule-title">ERSATZ BEI EINBERUFUNG / VERLETZUNG</div>
+Ist der Nachwuchsspieler durch eine offizielle ÖTTV-Einberufung verhindert oder mindestens 3 Monate verletzt, darf ihn jeder Kaderspieler ersetzen, der zu den Stichtagen <strong>15. August bzw. 11. Jänner</strong> weniger Ranglistenpunkte hat. Steht ein Nachwuchsspieler mit höchstens 100 RL-Punkten weniger im Kader, muss dieser eingesetzt werden.</div>
+<div class="diff-box"><div class="diff-label">▲ UGÄN1</div>
+U23-taugliche Kaderspieler (Altersklasse laut XTTV): <strong>Paul</strong> (U21), <strong>Leonhard</strong> (U21), <strong>Elias</strong> (U17), <strong>Anton</strong> (U19). Mit drei regelmäßig eingesetzten Nachwuchsspielern ist die Pflichtposition für UGÄN1 kein Engpass.</div></div></div>
+</div>
+<!-- ══════════ 04 ══════════ -->
+<div>
+<div class="section-label">04 — Der 4. Spieler · Einwechslung</div>
+<div class="card"><div class="card-header"><span class="card-title">Ein Reservespieler pro Match</span><span class="para">§ 5.2</span></div><div class="card-body"><div class="ranking-step"><span class="step-num">1.</span><span>Pro Mannschaft und Match darf <strong>ein 4. Spieler</strong> eingesetzt werden. Er muss mit der offiziellen Aufstellung <strong>vor Spielbeginn nominiert</strong> sein (im Spielbericht: AR bzw. BR).</span></div><div class="ranking-step"><span class="step-num">2.</span><span>Ob und auf welcher Position er einspringt, ist dem Schiedsrichter <strong>nach Spiel 3 (vor Spiel 4)</strong> oder <strong>nach Spiel 6 (vor Spiel 7)</strong> bekanntzugeben.</span></div><div class="ranking-step"><span class="step-num">3.</span><span>Er übernimmt eine der Positionen A1/A2/A3 bzw. B1/B2/B3 und darf auch im Doppel spielen.</span></div>
+<div class="diff-box"><div class="diff-label">▲ BEISPIEL UGÄN1 · DG1 R2 vs KUST2</div>
+Im Spielbericht steht „AR: Prager (R-4/R-8)": Leonhard war als 4. Spieler nominiert und kam für Elias auf Position A3 ins Spiel (Spiel 8). Die U23-Pflicht blieb erfüllt, weil Leonhard selbst U21 ist.</div></div></div>
+</div>
+<!-- ══════════ 05 ══════════ -->
+<div>
+<div class="section-label">05 — Tabellenreihung &amp; Ranglisten</div>
+<div class="two-col"><div class="card"><div class="card-header"><span class="card-title">Tabelle bei Punktegleichstand</span><span class="para">XTTV</span></div><div class="card-body"><div class="ranking-step"><span class="step-num">1.</span><span><strong>Spielverhältnis (Sp-V)</strong> — gewonnene ÷ verlorene Einzel- und Doppelspiele. Höherer Quotient = besserer Rang.</span></div><div class="ranking-step"><span class="step-num">2.</span><span><strong>Anzahl gewonnener Spiele (S)</strong>.</span></div><div class="ranking-step"><span class="step-num">3.</span><span><strong>Gesamtsatzverhältnis (Sz-V)</strong>.</span></div><div class="ranking-step"><span class="step-num">!</span><span>Strafverifizierte und kampflose Spiele zählen mit dem höchstmöglichen Resultat.</span></div><div class="note">Quelle: Tabellenerklärung XTTV (ÖTTV-Handbuch C § 18). Die Bundesligabestimmungen selbst regeln die Reihung nicht.</div></div></div><div class="card"><div class="card-header"><span class="card-title">Einzel- &amp; Doppelrangliste</span><span class="para">XTTV</span></div><div class="card-body"><div class="ranking-step"><span class="step-num">1.</span><span>Einzel: Aufnahme ab Einsatz in <strong>≥ 50 %</strong> der möglichen Mannschaftsspiele.</span></div><div class="ranking-step"><span class="step-num">2.</span><span>Ohne Niederlage: vor allen mit Niederlage, gereiht nach Sp × S.</span></div><div class="ranking-step"><span class="step-num">3.</span><span>Mit Niederlage: gereiht nach Sp × (S/N).</span></div><div class="ranking-step"><span class="step-num">4.</span><span>Doppel: gleiche Logik pro Mannschaft; bei Gleichheit mehr Doppelsiege, dann Satzverhältnis.</span></div><div class="ranking-step"><span class="step-num">!</span><span>Bereits begonnenes Einzel, danach kampflos abgegeben = Niederlage für die Rangliste.</span></div></div></div></div>
+</div>
+<!-- ══════════ 06 ══════════ -->
+<div>
+<div class="section-label">06 — Saisonstruktur · Play-off · Auf- &amp; Abstieg</div>
+<div class="card"><div class="card-header"><span class="card-title">Grunddurchgang → Play-off-Gruppen</span><span class="para">§ 2.2 · § 4</span></div><div class="card-body"><div class="ranking-step"><span class="step-num">1.</span><span><strong>1. Durchgang (Sep–Feb):</strong> jeder gegen jeden, einmal — 15 Runden bei 16 Teams. Heimrecht wurde gelost.</span></div><div class="ranking-step"><span class="step-num">2.</span><span><strong>2. Durchgang (Feb–Mai):</strong> Aufteilung in zwei gleich große Play-off-Gruppen (bei ungerader Zahl ist die obere größer). Bei 16 Teams voraussichtlich Plätze 1–8 oben, 9–16 unten.</span></div><div class="ranking-step"><span class="step-num">3.</span><span><strong>Bonuspunkte:</strong> die <strong>Hälfte</strong> der Punkte aus dem 1. Durchgang wird in die Play-off-Gruppe mitgenommen, bei ungerader Zahl <strong>aufgerundet</strong>.</span></div>
+<div class="tscroll" style="margin-top:12px"><table>
+<thead><tr><th>Platzierung (Endstand)</th><th>Folge</th></tr></thead>
+<tbody>
+<tr><td>1. oberes Play-off</td><td style="color:var(--green)">Aufstieg in die 1. Bundesliga</td></tr>
+<tr><td>2. oberes Play-off</td><td style="color:var(--yellow)">Qualifikation gegen den 9. des unteren Play-offs der 1. Bundesliga</td></tr>
+<tr><td>14., 15., 16.</td><td style="color:var(--red)">Abstieg — verlieren die Bundesliga-Startberechtigung</td></tr>
+</tbody></table></div>
+<div class="diff-box"><div class="diff-label">▲ RECHENBEISPIEL UGÄN1</div>
+Stand nach R2: 3 Punkte → ½ = 1,5 → aufgerundet <strong>2 Bonuspunkte</strong>. Jeder Sieg im Grunddurchgang (+3) bringt also rund 1,5 Punkte Vorsprung ins Play-off.</div></div></div>
+</div>
+<!-- ══════════ 07 ══════════ -->
+<div>
+<div class="section-label">07 — Organisatorisches</div>
+<div class="card"><div class="card-header"><span class="card-title">Rahmenbedingungen 2. Bundesliga</span></div><div class="card-body">
+<div class="tscroll"><table>
+<thead><tr><th>Thema</th><th>Regel</th><th>§</th></tr></thead>
+<tbody>
+<tr><td>Schiedsrichter</td><td>2 geprüfte SR (bei 1 Tisch: 1 SR + 1 Assistent)</td><td class="mono small">10.3</td></tr>
+<tr><td>Ergebniseingabe</td><td>innerhalb <strong>45 Minuten</strong> nach Spielende ins ÖTTV-EDV-System (XTTV)</td><td class="mono small">6.9</td></tr>
+<tr><td>Kadermeldung</td><td>mind. <strong>5 Spieler</strong> bis 1. August; danach nur per E-Mail</td><td class="mono small">6.2</td></tr>
+<tr><td>Lizenzgebühr</td><td><strong>€1.080</strong> pro Saison, fällig 1. August</td><td class="mono small">11.2</td></tr>
+<tr><td>Spielerbox</td><td>mind. <strong>12x6 m</strong> (−10 % zulässig), geschlossene Box</td><td class="mono small">8.1</td></tr>
+</tbody></table></div></div></div>
+</div>
+<!-- ══════════ 08 ══════════ -->
+<div>
+<div class="section-label">08 — Noch zu klären</div>
+<div class="diff-box check"><div class="diff-label">? 5. SATZ</div>
+Die Sonderregel <strong>„5. Satz ab 0:0, gewonnen hat, wer zuerst 6 Punkte erreicht"</strong> steht in § 5.1 — dem Abschnitt der <strong>1. Bundesliga</strong>. In § 5.2 (2. Bundesliga) wurde kein Verweis darauf gefunden. Für die 2. Bundesliga gilt daher vermutlich der normale 5. Satz bis 11. <em>Im Original-PDF gegenprüfen.</em></div>
+<div class="diff-box"><div class="diff-label">? PLAY-OFF-GRENZE</div>
+Welche Plätze genau in das obere bzw. untere Play-off kommen, ist in den Bestimmungen nicht ausdrücklich genannt (nur „zwei gleich große Gruppen").</div>
+</div>
+<!-- ══════════ 09 ══════════ -->
+<div>
+<div class="section-label">09 — Datenquellen &amp; URLs</div>
+<div class="card"><div class="card-header"><span class="card-title">Regelwerk &amp; XTTV</span></div><div class="card-body"><ul class="url-list">
+<li><span class="url-label">Bestimmungen</span><a href="https://www.ttbundesliga.at/fileadmin/media/Dokumente/Bestimmungen/Bestimmungen_Bundesliga-Herren_2026-2027.pdf" target="_blank">ÖTTV-Bundesligabestimmungen Herren 2026/27 (PDF)</a></li>
+<li><span class="url-label">Geschäftsordn.</span><a href="https://www.ttbundesliga.at/fileadmin/media/OETTV/Dokumente/Bestimmungen/Geschaeftsordnung_Bundesliga.pdf" target="_blank">Bundesliga-Geschäftsordnung (PDF)</a></li>
+<li><span class="url-label">Spiele</span><a href="https://oettv.xttv.at/ed/index.php?tid=54116&amp;do=spiele" target="_blank">UGÄN1 · tid=54116 spiele</a></li>
+<li><span class="url-label">Kader</span><a href="https://oettv.xttv.at/ed/index.php?tid=54116&amp;do=mdaten" target="_blank">UGÄN1 · tid=54116 mdaten</a></li>
+<li><span class="url-label">Tabelle</span><a href="https://oettv.xttv.at/ed/index.php?lid=8904" target="_blank">2. Herren-BL 1. DG · lid=8904</a></li>
+<li><span class="url-label">Kreuztabelle</span><a href="https://oettv.xttv.at/ed/index.php?lid=8904&amp;do=kreuz" target="_blank">lid=8904 kreuz</a></li>
+<li><span class="url-label">Termine</span><a href="https://oettv.xttv.at/ed/index.php?do=vereinstermine&amp;oid=133&amp;sjid=26&amp;vid=97&amp;bwid=8729" target="_blank">Vereinstermine UTTC Gänserndorf</a></li>
+<li><span class="url-label">Spielbericht</span><a href="https://oettv.xttv.at/ed/index.php?meid=449666" target="_blank">meid=… (Beispiel R1)</a></li>
+</ul></div></div>
+</div>
+<div class="note" style="text-align:center">Stand 27.09.2026 · Grundlage: ÖTTV-Bundesligabestimmungen Herren 2026/27 · Regelwerk v0.01</div>
+</div>
+</body>
+</html>
