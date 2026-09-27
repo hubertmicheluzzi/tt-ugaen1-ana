@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UGÄNAna_W1 · DG1 · R2 · 20.09.2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+  :root {
+    --bg:#0d0f14; --bg2:#13161e; --bg3:#1a1f2b; --border:#2a3040;
+    --acc:#4a9eff; --green:#4ade80; --yellow:#fbbf24; --red:#f87171;
+    --orange:#fb923c; --text:#e2e8f0; --dim:#7a8899; --bright:#ffffff;
+    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;}
+  .container{max-width:1100px;margin:0 auto;padding:28px 24px;display:grid;gap:28px;}
+  .section-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title{font-weight:600;font-size:14px;color:var(--bright);}
+  .card-body{padding:18px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  .big-score{display:flex;align-items:center;justify-content:center;gap:24px;padding:20px 0;}
+  .big-score .team{font-size:15px;font-weight:600;color:var(--bright);text-align:center;flex:1;}
+  .big-score .team.su9{color:var(--acc);}
+  .big-score .score{font-family:var(--mono);font-size:48px;font-weight:600;}
+  .big-score .score.w{color:var(--green);}
+  .big-score .score.d{color:var(--yellow);}
+  .big-score .score.l{color:var(--red);}
+  .big-score .meta{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;margin-top:4px;}
+  .stat-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat-chip{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px 14px;font-family:var(--mono);}
+  .stat-chip .n{color:var(--dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:3px;}
+  .stat-chip .v{color:var(--bright);font-size:15px;font-weight:600;}
+  .analysis{background:rgba(74,158,255,.05);border:1px solid rgba(74,158,255,.2);border-radius:4px;padding:14px 16px;font-size:13px;line-height:1.8;}
+  .analysis strong{color:var(--acc);}
+  .analysis .warn{color:var(--yellow);font-weight:600;}
+  .analysis .good{color:var(--green);font-weight:600;}
+  .analysis .bad{color:var(--red);font-weight:600;}
+  .analysis .orange{color:var(--orange);font-weight:600;}
+  .games-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:10px;}
+  .game-cell{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 8px;}
+  .game-cell .gid{font-family:var(--mono);color:var(--dim);font-size:9px;display:block;margin-bottom:2px;}
+  .game-cell .gplayer{color:var(--text);font-size:10px;display:block;margin-bottom:3px;line-height:1.3;}
+  .game-cell .gresult{font-family:var(--mono);font-weight:600;font-size:12px;}
+  .game-cell .gresult.w{color:var(--green);}
+  .game-cell .gresult.l{color:var(--red);}
+  .game-cell .gresult.wo{color:var(--yellow);}
+  .game-cell.doppel{background:rgba(74,158,255,.07);border-color:rgba(74,158,255,.3);}
+  .game-cell.inactive{opacity:.35;}
+  .player-card{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:14px;}
+  .player-name{font-weight:600;font-size:14px;color:var(--bright);margin-bottom:2px;}
+  .player-sub{font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:10px;}
+  .pstats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+  .pstat .pn{font-family:var(--mono);font-size:9px;color:var(--dim);display:block;}
+  .pstat .pv{font-family:var(--mono);font-size:16px;font-weight:600;}
+  .pbar{height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin-bottom:6px;}
+  .pbar-fill{height:100%;border-radius:2px;}
+  .perf-detail{font-size:11px;color:var(--dim);line-height:1.5;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{padding:8px 12px;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:8px 12px;border-bottom:1px solid rgba(42,48,64,.4);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr.su9-row{background:rgba(74,158,255,.08);}
+  tr.su9-row td{color:var(--bright);}
+  tr.hl{background:rgba(251,191,36,.06);}
+  .match-list{list-style:none;display:grid;gap:8px;}
+  .match-item{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:12px 16px;}
+  .match-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;}
+  .match-runde{font-family:var(--mono);font-size:10px;color:var(--dim);}
+  .match-teams{font-weight:600;font-size:13px;color:var(--bright);flex:1;}
+  .match-score{font-family:var(--mono);font-size:17px;font-weight:600;}
+  .match-score.w{color:var(--green);}
+  .match-score.d{color:var(--yellow);}
+  .match-score.l{color:var(--red);}
+  .match-note{font-size:11px;color:var(--dim);}
+  .next-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-radius:6px;padding:20px;}
+  .next-label{font-family:var(--mono);font-size:11px;color:var(--yellow);letter-spacing:.1em;margin-bottom:10px;}
+  .next-teams{font-size:20px;font-weight:700;color:var(--bright);margin-bottom:4px;}
+  .next-meta{font-family:var(--mono);font-size:12px;color:var(--dim);}
+  footer{text-align:center;padding:20px;font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--border);margin-top:10px;}
+  .bs-team{font-size:16px;font-weight:700;color:var(--dim);}
+  .bs-team.su9{color:var(--acc);}
+  .bs-score{font-family:var(--mono);font-size:44px;font-weight:700;line-height:1.1;}
+  .bs-sub{font-size:11px;color:var(--dim);}
+  .games-grid{grid-template-columns:repeat(5,1fr);}
+  @media(max-width:700px){.games-grid{grid-template-columns:repeat(2,1fr);}.big-score{gap:12px;}.bs-score{font-size:34px;}}
+  .lineup{font-size:12px;color:var(--dim);margin-bottom:8px;font-family:var(--mono);}
+  .note,.legend{font-size:11px;color:var(--dim);margin-top:8px;}
+  .mono{font-family:var(--mono);}
+  .small{font-size:12px;color:var(--dim);}
+  .tscroll{overflow-x:auto;}
+  tr.abst td{color:var(--red);}
+  tr.abst{background:rgba(248,113,113,.05);}
+  .pstat .pv[style*="--bright"]{color:var(--bright);}
+
+</style>
+</head>
+<body>
+<div class="container">
+<!-- ══════════════════════════ 01 ══════════════════════════ -->
+<div>
+<div class="section-label">01 — Aktuelles Ergebnis</div>
+<div class="card">
+<div class="card-header"><span class="card-title">DG1 · Runde 2 · So 20.09.2026 · Heim</span></div>
+<div class="card-body">
+<div class="big-score">
+<div style="text-align:right"><div class="bs-team su9">UGÄN1</div><div class="bs-sub">Heim · Rang 12</div></div>
+<div style="text-align:center"><div class="bs-score" style="color:var(--red)">3:6</div><div class="bs-sub">Niederlage · 1 Punkt · Heim</div></div>
+<div style="text-align:left"><div class="bs-team">KUST2</div><div class="bs-sub">Gast · Rang 8</div></div>
+</div>
+<div class="stat-row" style="justify-content:center;margin-bottom:16px;">
+<div class="stat-chip"><span class="n">Mannschaftspunkte</span><span class="v" style="color:var(--yellow)">+1</span></div><div class="stat-chip"><span class="n">UGÄN1 Gesamtpunkte</span><span class="v" style="color:var(--yellow)">3</span></div><div class="stat-chip"><span class="n">UGÄN1 Rang</span><span class="v" style="color:var(--yellow)">12 / 16</span></div><div class="stat-chip"><span class="n">Spiele</span><span class="v">3:6</span></div><div class="stat-chip"><span class="n">Sätze</span><span class="v">15:22</span></div>
+</div>
+<div class="analysis"><span class="bad">3:6 gegen SU Sparkasse Kufstein 2</span> — Endstand nach Spiel 9, das Doppel wurde nicht mehr gespielt. <span class="good">Paul erneut bester Mann (2/3)</span>, schlägt Fabian und Lorenz jeweils 3:1. Roman bleibt als A1 ohne Sieg (0/3, zweimal 1:3, einmal 2:3). Elias feiert sein Debüt mit einem 3:2 gegen Fabian, verliert aber gegen Konstantin; ab Spiel 8 kam Leonhard für ihn ins Spiel (0:3 gegen Lorenz). <span class="warn">Konstantin (KUST2, U23) blieb 3/3 — der Unterschied des Tages.</span> Mit dem Antrittspunkt hält UGÄN1 3 Punkte, Rang 12.</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════ 02 ══════════════════════════ -->
+<div>
+<div class="section-label">02 — Unsere Spielerleistung · DG1 R2 vs KUST2</div>
+<div class="two-col">
+<div class="player-card">
+<div class="player-name">Paul · Position A2</div>
+<div class="player-sub">DG1 R2 · Einzel 2/3 · Doppel –</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einzelsiege</span><span class="pv" style="color:var(--green)">2</span></div><div class="pstat"><span class="pn">Einzelnied.</span><span class="pv" style="color:var(--yellow)">1</span></div><div class="pstat"><span class="pn">Doppel</span><span class="pv" style="color:var(--dim)">—</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:67%;background:var(--green)"></div></div>
+<div class="perf-detail">Spiel 2 vs Fabian: <span style="color:var(--green)">3:1 ✓</span> · Spiel 4 vs Lorenz: <span style="color:var(--green)">3:1 ✓</span> · Spiel 7 vs Konstantin: <span style="color:var(--red)">1:3 ✗</span></div>
+</div>
+<div class="player-card">
+<div class="player-name">Roman · Position A1</div>
+<div class="player-sub">DG1 R2 · Einzel 0/3 · Doppel –</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einzelsiege</span><span class="pv" style="color:var(--red)">0</span></div><div class="pstat"><span class="pn">Einzelnied.</span><span class="pv" style="color:var(--red)">3</span></div><div class="pstat"><span class="pn">Doppel</span><span class="pv" style="color:var(--dim)">—</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:0%;background:var(--red)"></div></div>
+<div class="perf-detail">Spiel 1 vs Lorenz: <span style="color:var(--red)">1:3 ✗</span> · Spiel 5 vs Konstantin: <span style="color:var(--red)">1:3 ✗</span> · Spiel 9 vs Fabian: <span style="color:var(--red)">2:3 ✗</span></div>
+</div>
+<div class="player-card">
+<div class="player-name">Elias · Position A3 (U23)</div>
+<div class="player-sub">DG1 R2 · Einzel 1/2 · Debüt</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einzelsiege</span><span class="pv" style="color:var(--yellow)">1</span></div><div class="pstat"><span class="pn">Einzelnied.</span><span class="pv" style="color:var(--yellow)">1</span></div><div class="pstat"><span class="pn">Doppel</span><span class="pv" style="color:var(--dim)">—</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:50%;background:var(--yellow)"></div></div>
+<div class="perf-detail">Spiel 3 vs Konstantin: <span style="color:var(--red)">1:3 ✗</span> · Spiel 6 vs Fabian: <span style="color:var(--green)">3:2 ✓</span> · ab Spiel 8 ausgewechselt</div>
+</div>
+<div class="player-card">
+<div class="player-name">Leonhard · Reserve (AR)</div>
+<div class="player-sub">DG1 R2 · eingewechselt ab Spiel 8</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einzelsiege</span><span class="pv" style="color:var(--red)">0</span></div><div class="pstat"><span class="pn">Einzelnied.</span><span class="pv" style="color:var(--red)">1</span></div><div class="pstat"><span class="pn">Doppel</span><span class="pv" style="color:var(--dim)">—</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:0%;background:var(--red)"></div></div>
+<div class="perf-detail">Spiel 8 vs Lorenz: <span style="color:var(--red)">0:3 ✗</span></div>
+</div>
+</div>
+<div class="analysis" style="margin-top:12px">
+<strong>Fazit DG1 R2:</strong> Paul trägt die Mannschaft (4/6 nach zwei Runden). <span class="bad">Romans A1-Einsätze bringen bisher nur 1/6</span> — gegen Gegner um RC 1900 fehlt aktuell der Punkt. Elias zeigt im Debüt, dass er auf der U23-Position mithalten kann. Der Wechsel in Spiel 8 (Leonhard für Elias) brachte nichts.
+</div>
+</div>
+<!-- ══════════════════════════ 03 ══════════════════════════ -->
+<div>
+<div class="section-label">03 — Der Gegner · KUST2</div>
+<div class="card">
+<div class="card-body">
+<div class="stat-row" style="margin-bottom:14px"><div class="stat-chip"><span class="n">KUST2 Rang</span><span class="v" style="color:var(--yellow)">8 / 16</span></div><div class="stat-chip"><span class="n">Punkte</span><span class="v">4</span></div><div class="stat-chip"><span class="n">S-U-N</span><span class="v">1-0-1</span></div><div class="stat-chip"><span class="n">Sp-V</span><span class="v">6:9</span></div></div>
+<table>
+<thead><tr><th>Spieler</th><th>Pos.</th><th>RC</th><th>AK</th><th>vs UGÄN1</th><th>Ergebnisse</th></tr></thead>
+<tbody>
+<tr><td>Lorenz</td><td>B1</td><td class="mono">1923</td><td>–</td><td class="mono" style="color:var(--green)">2:1</td><td class="small">Roman 3:1 · Paul 1:3 · Leonhard 3:0</td></tr>
+<tr><td>Fabian</td><td>B2</td><td class="mono">1794</td><td>U21</td><td class="mono" style="color:var(--red)">1:2</td><td class="small">Paul 1:3 · Elias 2:3 · Roman 3:2</td></tr>
+<tr><td>Konstantin</td><td>B3</td><td class="mono">1889</td><td>U23</td><td class="mono" style="color:var(--green)">3:0</td><td class="small">Elias 3:1 · Roman 3:1 · Paul 3:1</td></tr>
+</tbody>
+</table>
+<div class="analysis" style="margin-top:12px">Kufstein kam nach einem 0:6 in R1 mit Wut im Bauch. <strong>Konstantin</strong> (RC 1889) war auf der U23-Position deutlich stärker als die Nachwuchsspieler anderer Teams — das ist der Schlüssel: Wer auf Position 3 gewinnt, gewinnt in dieser Liga oft das Match. Fabian (RC 1794) war schlagbar (2 von 3 Spielen gegen ihn gewonnen).</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════ 04 ══════════════════════════ -->
+<div>
+<div class="section-label">04 — Spiel-Details · Kreuzmatrix DG1 R2</div>
+<div class="card">
+<div class="card-header"><span class="card-title">UGÄN1 vs KUST2 · Endstand 3:6</span></div>
+<div class="card-body">
+<div class="lineup">UGÄN1: A1 Roman · A2 Paul · A3 Elias · AR Leonhard  |  KUST2: B1 Lorenz · B2 Fabian · B3 Konstantin</div>
+<div class="games-grid">
+<div class="game-cell"><span class="gid">1 · A1–B1</span><span class="gplayer">Roman vs Lorenz</span><span class="gresult l">1:3 ✗</span></div>
+<div class="game-cell"><span class="gid">2 · A2–B2</span><span class="gplayer">Paul vs Fabian</span><span class="gresult w">3:1 ✓</span></div>
+<div class="game-cell"><span class="gid">3 · A3–B3</span><span class="gplayer">Elias vs Konstantin</span><span class="gresult l">1:3 ✗</span></div>
+<div class="game-cell"><span class="gid">4 · A2–B1</span><span class="gplayer">Paul vs Lorenz</span><span class="gresult w">3:1 ✓</span></div>
+<div class="game-cell"><span class="gid">5 · A1–B3</span><span class="gplayer">Roman vs Konstantin</span><span class="gresult l">1:3 ✗</span></div>
+<div class="game-cell"><span class="gid">6 · A3–B2</span><span class="gplayer">Elias vs Fabian</span><span class="gresult w">3:2 ✓</span></div>
+<div class="game-cell"><span class="gid">7 · A2–B3</span><span class="gplayer">Paul vs Konstantin</span><span class="gresult l">1:3 ✗</span></div>
+<div class="game-cell"><span class="gid">8 · A3–B1</span><span class="gplayer">Leonhard (AR) vs Lorenz</span><span class="gresult l">0:3 ✗</span></div>
+<div class="game-cell"><span class="gid">9 · A1–B2</span><span class="gplayer">Roman vs Fabian</span><span class="gresult l">2:3 ✗</span></div>
+<div class="game-cell inactive"><span class="gid">10 · Doppel</span><span class="gplayer">nicht gespielt – Endstand 3:6 nach Spiel 9</span><span class="gresult"></span></div>
+</div>
+<div class="note">Format: 9 Einzel + 1 Doppel (Spiel 10) · Endstand bei 6 Siegen · 5:5 = Unentschieden · 2 Tische</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════ 05 ══════════════════════════ -->
+<div>
+<div class="section-label">05 — Gesamtanalyse &amp; Ausblick Saison 2026/27</div>
+<div class="card"><div class="card-body"><div class="analysis">
+<strong>Stärken:</strong> <span class="good">Paul</span> (RC 1923, U21) ist mit 4:2 Rang 12 der Einzelrangliste und das Rückgrat. Das Doppel <strong>Leonhard/Paul</strong> hat sein bisher einziges Spiel gewonnen (3:2 gegen SALZ3) und damit das Remis gerettet. Mit Paul, Leonhard und Elias hat UGÄN1 drei U23-taugliche Spieler — die Pflichtposition 3 ist nie ein Problem.<br/><br/>
+<strong>Schwächen:</strong> <span class="bad">Roman 1:5</span> auf Position A1 — er trifft dort jeweils auf die Nummer 1 und 2 des Gegners. Leonhard (1:3) ist noch nicht in Form. Beide Heimspiele brachten zusammen nur 3 Punkte.<br/><br/>
+<span class="warn">Lage:</span> 3 Punkte, Rang 12 — punktegleich mit den Abstiegsplätzen (KIRB1 Rang 14 und NFS2 Rang 15 ebenfalls 3 P). Die nächsten drei Spiele sind alle auswärts.<br/><br/>
+<strong>Empfehlungen:</strong><br/>
+1. Doppel Leonhard/Paul beibehalten<br/>
+2. R4 bei NFS2 (Rang 15) ist das erste echte Schlüsselspiel<br/>
+3. Heim-Doppelrunde 07./08.11. (KAPF2, GRS1): hier müssen die ersten Siege her
+</div></div></div>
+</div>
+<!-- ══════════════════════════ 06 ══════════════════════════ -->
+<div>
+<div class="section-label">06 — Nächstes Spiel</div>
+<div class="next-box">
+<div class="next-label">▶ NÄCHSTES · Sa 03.10.2026 · 15:00 Uhr · AUSWÄRTS · DG1 R3</div>
+<div class="next-teams">NFS1 – UGÄN1</div>
+<div class="next-meta">Naturfreunde Stadlau (Wien) · 2. Herren-Bundesliga 1. Durchgang</div>
+</div>
+<div class="card" style="margin-top:12px">
+<div class="card-header"><span class="card-title">Vorschau: NFS1 vs UGÄN1</span></div>
+<div class="card-body">
+<div class="stat-row" style="margin-bottom:14px"><div class="stat-chip"><span class="n">Datum</span><span class="v">Sa 03.10.2026 · 15:00</span></div><div class="stat-chip"><span class="n">Ort</span><span class="v" style="color:var(--yellow)">Auswärts · NF Stadlau</span></div><div class="stat-chip"><span class="n">NFS1 Rang</span><span class="v" style="color:var(--red)">2 / 16</span></div><div class="stat-chip"><span class="n">NFS1 Punkte</span><span class="v" style="color:var(--red)">6</span></div><div class="stat-chip"><span class="n">NFS1 Sp-V</span><span class="v" style="color:var(--red)">12:3</span></div></div>
+<table>
+<thead><tr><th>NFS1-Spieler</th><th>RC</th><th>AK</th><th>Bilanz DG1</th></tr></thead>
+<tbody>
+<tr><td>Balazs</td><td class="mono">2156</td><td>–</td><td class="mono" style="color:var(--green)">5:0</td></tr>
+<tr><td>Maxime</td><td class="mono">2065</td><td>–</td><td class="mono" style="color:var(--green)">5:0</td></tr>
+<tr><td>Eric</td><td class="mono">1774</td><td>U23</td><td class="mono" style="color:var(--yellow)">2:3</td></tr>
+</tbody>
+</table>
+<div class="analysis" style="margin-top:12px"><span class="warn">NFS1 ist klarer Favorit</span> — Balazs und Maxime liegen 140–230 RC-Punkte über Paul und sind noch ungeschlagen. Die realistische Chance liegt bei den drei Spielen gegen <strong>Eric</strong> (RC 1774, U23-Position) und im Doppel. Der Antrittspunkt ist sicher; jeder Einzelsieg verbessert das Spielverhältnis, das bei Punktegleichheit entscheidet.</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════ 07 ══════════════════════════ -->
+<div>
+<div class="section-label">07 — Tabellenstand · 2. Herren-Bundesliga 1. Durchgang</div>
+<div class="card">
+<div class="card-header"><span class="card-title">Tabelle 2026/27 · Stand 27.09.2026 (nach R2)</span></div>
+<div class="card-body">
+<div class="stat-row" style="margin-bottom:16px"><div class="stat-chip"><span class="n">UGÄN1 Rang</span><span class="v" style="color:var(--yellow)">12 / 16</span></div><div class="stat-chip"><span class="n">Punkte</span><span class="v" style="color:var(--yellow)">3</span></div><div class="stat-chip"><span class="n">Gespielt</span><span class="v">2</span></div><div class="stat-chip"><span class="n">Offen</span><span class="v">13</span></div><div class="stat-chip"><span class="n">Sp-V</span><span class="v">8:11</span></div><div class="stat-chip"><span class="n">Sz-V</span><span class="v">35:41</span></div></div>
+<div class="tscroll"><table>
+<thead><tr><th>Rang</th><th>Mannschaft</th><th>Kürzel</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>Sp-V</th><th>Sz-V</th><th>P</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Turnerschaft Innsbruck 2</td><td class="mono">INNS2</td><td>2</td><td>2</td><td>0</td><td>0</td><td class="mono">12:3</td><td class="mono">38:13</td><td><strong>6</strong></td></tr>
+<tr class="hl"><td>2</td><td>Naturfreunde Stadlau 1</td><td class="mono">NFS1</td><td>2</td><td>2</td><td>0</td><td>0</td><td class="mono">12:3</td><td class="mono">40:14</td><td><strong>6</strong></td></tr>
+<tr><td>3</td><td>Muki Ebensee 1</td><td class="mono">SGEB1</td><td>2</td><td>2</td><td>0</td><td>0</td><td class="mono">12:7</td><td class="mono">41:31</td><td><strong>6</strong></td></tr>
+<tr><td>4</td><td>SV EBE St. Urban 1</td><td class="mono">URBA1</td><td>2</td><td>1</td><td>1</td><td>0</td><td class="mono">11:7</td><td class="mono">35:32</td><td><strong>5</strong></td></tr>
+<tr><td>5</td><td>TTC Feldkirchen 1</td><td class="mono">FKI1</td><td>2</td><td>1</td><td>1</td><td>0</td><td class="mono">11:8</td><td class="mono">40:33</td><td><strong>5</strong></td></tr>
+<tr><td>6</td><td>SCHWAB Küchen - Tischlerei 1</td><td class="mono">SGVH1</td><td>2</td><td>1</td><td>0</td><td>1</td><td class="mono">9:6</td><td class="mono">32:27</td><td><strong>4</strong></td></tr>
+<tr><td>7</td><td>SPG Wohnpark Alt-Erlaa - Future 1</td><td class="mono">SGWF1</td><td>2</td><td>1</td><td>0</td><td>1</td><td class="mono">9:8</td><td class="mono">31:29</td><td><strong>4</strong></td></tr>
+<tr><td>8</td><td>SU Sparkasse Kufstein 2</td><td class="mono">KUST2</td><td>2</td><td>1</td><td>0</td><td>1</td><td class="mono">6:9</td><td class="mono">24:33</td><td><strong>4</strong></td></tr>
+<tr><td>9</td><td>USV Indigo Graz 1</td><td class="mono">IND1</td><td>2</td><td>1</td><td>0</td><td>1</td><td class="mono">6:9</td><td class="mono">24:36</td><td><strong>4</strong></td></tr>
+<tr><td>10</td><td>KSV-HiWay-MEWO 2</td><td class="mono">KAPF2</td><td>2</td><td>0</td><td>1</td><td>1</td><td class="mono">9:11</td><td class="mono">41:36</td><td><strong>3</strong></td></tr>
+<tr><td>11</td><td>TTV Raika Team Cup Wr. Neudorf 2</td><td class="mono">NEUD2</td><td>2</td><td>0</td><td>1</td><td>1</td><td class="mono">8:11</td><td class="mono">37:37</td><td><strong>3</strong></td></tr>
+<tr class="su9-row"><td>12</td><td>⬤ UTTC Gänserndorf 1</td><td class="mono">UGÄN1</td><td>2</td><td>0</td><td>1</td><td>1</td><td class="mono">8:11</td><td class="mono">35:41</td><td><strong>3</strong></td></tr>
+<tr><td>13</td><td>UTTC Sparkasse Salzburg 3</td><td class="mono">SALZ3</td><td>2</td><td>0</td><td>1</td><td>1</td><td class="mono">8:11</td><td class="mono">31:42</td><td><strong>3</strong></td></tr>
+<tr class="abst"><td>14</td><td>TTC Raiba Kirchbichl 1</td><td class="mono">KIRB1</td><td>2</td><td>0</td><td>1</td><td>1</td><td class="mono">7:11</td><td class="mono">28:37</td><td><strong>3</strong></td></tr>
+<tr class="abst"><td>15</td><td>Naturfreunde Stadlau 2</td><td class="mono">NFS2</td><td>2</td><td>0</td><td>1</td><td>1</td><td class="mono">5:11</td><td class="mono">19:37</td><td><strong>3</strong></td></tr>
+<tr class="abst"><td>16</td><td>TTC Gratwein 1</td><td class="mono">GRS1</td><td>2</td><td>0</td><td>0</td><td>2</td><td class="mono">5:12</td><td class="mono">22:40</td><td><strong>2</strong></td></tr>
+</tbody>
+</table></div>
+<div class="legend">Punkte: Sieg 3 · Unentschieden 2 · Niederlage 1 (Antrittspunkt) · Nichtantreten 0 · <span style="color:var(--red)">■</span> Abstiegsplätze 14–16</div>
+<div class="analysis" style="margin-top:14px">Nach zwei Runden liegt das Feld eng zusammen: zwischen Rang 10 und Rang 15 haben alle Teams 3 Punkte, nur das Spielverhältnis trennt sie. <span class="warn">UGÄN1 steht 2 Plätze über der Abstiegszone.</span> Nach dem Grunddurchgang (15 Runden) geht es in die Play-offs: oberes Play-off (Aufstieg) bzw. unteres Play-off, in dem über den Abstieg (Plätze 14–16) entschieden wird — die DG1-Punkte werden zur Hälfte mitgenommen.</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════ 08 ══════════════════════════ -->
+<div>
+<div class="section-label">08 — Spielerstatistiken · Saison gesamt &amp; U23-Tracking</div>
+<div class="two-col">
+<div class="player-card">
+<div class="player-name">Paul</div>
+<div class="player-sub">Stamm · RC 1923 ± 40 · U21 · Rang 12 Einzelrangliste</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einsätze</span><span class="pv" style="color:var(--bright)">2</span></div><div class="pstat"><span class="pn">Siege</span><span class="pv" style="color:var(--green)">4</span></div><div class="pstat"><span class="pn">Niederlagen</span><span class="pv" style="color:var(--yellow)">2</span></div><div class="pstat"><span class="pn">Quote</span><span class="pv" style="color:var(--green)">67%</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:67%;background:var(--green)"></div></div>
+<div class="perf-detail">R1 2/3 (A3) · R2 2/3 (A2) · Doppel 1:0 mit Leonhard</div>
+</div>
+<div class="player-card">
+<div class="player-name">Roman</div>
+<div class="player-sub">Stamm · Mannschaftsführer · RC 1830 ± 43 · S40 · Rang 44</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einsätze</span><span class="pv" style="color:var(--bright)">2</span></div><div class="pstat"><span class="pn">Siege</span><span class="pv" style="color:var(--red)">1</span></div><div class="pstat"><span class="pn">Niederlagen</span><span class="pv" style="color:var(--red)">5</span></div><div class="pstat"><span class="pn">Quote</span><span class="pv" style="color:var(--red)">17%</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:17%;background:var(--red)"></div></div>
+<div class="perf-detail">R1 1/3 (A1) · R2 0/3 (A1) · einziger Sieg: 3:0 gegen Joshua (SALZ3)</div>
+</div>
+<div class="player-card">
+<div class="player-name">Leonhard</div>
+<div class="player-sub">Stamm · RC 1822 ± 44 · U21 · Rang 37</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einsätze</span><span class="pv" style="color:var(--bright)">2</span></div><div class="pstat"><span class="pn">Siege</span><span class="pv" style="color:var(--yellow)">1</span></div><div class="pstat"><span class="pn">Niederlagen</span><span class="pv" style="color:var(--red)">3</span></div><div class="pstat"><span class="pn">Quote</span><span class="pv" style="color:var(--red)">25%</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:25%;background:var(--yellow)"></div></div>
+<div class="perf-detail">R1 1/3 (A2) · R2 0/1 (Reserve) · Doppel 1:0 mit Paul</div>
+</div>
+<div class="player-card">
+<div class="player-name">Elias</div>
+<div class="player-sub">Stamm · RC 1805 ± 49 · U17 · Rang 30</div>
+<div class="pstats"><div class="pstat"><span class="pn">Einsätze</span><span class="pv" style="color:var(--bright)">1</span></div><div class="pstat"><span class="pn">Siege</span><span class="pv" style="color:var(--yellow)">1</span></div><div class="pstat"><span class="pn">Niederlagen</span><span class="pv" style="color:var(--yellow)">1</span></div><div class="pstat"><span class="pn">Quote</span><span class="pv" style="color:var(--yellow)">50%</span></div></div>
+<div class="pbar"><div class="pbar-fill" style="width:50%;background:var(--yellow)"></div></div>
+<div class="perf-detail">R2 1/2 (A3) · Debüt mit 3:2-Sieg gegen Fabian</div>
+</div>
+</div>
+<div class="card" style="margin-top:12px">
+<div class="card-header"><span class="card-title">U23-Pflicht · Position A3/B3</span></div>
+<div class="card-body">
+<table>
+<thead><tr><th>Runde</th><th>Gegner</th><th>UGÄN1 Pos. 3</th><th>AK</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td class="mono">R1</td><td class="mono">SALZ3</td><td>Paul</td><td>U21</td><td style="color:var(--green)">✓ erfüllt</td></tr>
+<tr><td class="mono">R2</td><td class="mono">KUST2</td><td>Elias (ab Spiel 8: Leonhard, U21)</td><td>U17</td><td style="color:var(--green)">✓ erfüllt</td></tr>
+</tbody>
+</table>
+<div class="note">U23-taugliche Spieler im Kader: Paul (U21), Leonhard (U21), Elias (U17), Anton (U19). Verstoß → 0:6 Strafverifizierung.</div>
+</div>
+</div>
+<div class="note" style="margin-top:8px">Weitere Kaderspieler ohne Einsatz: Erik, Georg, Johannes (Allgemein), Anton (U19), Gerhard (S60). RC-Werte Stand 27.09.2026.</div>
+</div>
+<!-- ══════════════════════════ 09 ══════════════════════════ -->
+<div>
+<div class="section-label">09 — Doppelstatistik · Saison 2026/27</div>
+<div class="card">
+<div class="card-header"><span class="card-title">Doppelpaare UGÄN1</span></div>
+<div class="card-body">
+<table>
+<thead><tr><th>Paar</th><th>Einsätze</th><th>Siege</th><th>Niederlagen</th><th>Sätze</th><th>Quote</th></tr></thead>
+<tbody>
+<tr style="background:rgba(74,222,128,.05)"><td><strong>Leonhard / Paul</strong></td><td>1</td><td style="color:var(--green)">1</td><td>0</td><td class="mono">3:2</td><td><span style="color:var(--green);font-family:var(--mono);font-weight:600">100%</span></td></tr>
+</tbody>
+</table>
+<div class="analysis" style="margin-top:14px">Das Doppel wird als Spiel 10 nur gespielt, wenn nach 9 Einzeln noch kein Team 6 Siege hat — in R2 entfiel es. In R1 holte <strong>Leonhard/Paul</strong> beim Stand von 4:5 den Ausgleich zum 5:5 (3:2 gegen Seung/Simon). Doppelrangliste: Rang 3.</div>
+</div>
+</div>
+</div>
+<!-- ══════════════════════════ 10 ══════════════════════════ -->
+<div>
+<div class="section-label">10 — Alle Ergebnisse · Saison 2026/27</div>
+<ul class="match-list">
+<li class="match-item">
+<div class="match-header"><span class="match-runde">DG1 · R1 · Sa 19.09.2026 · Heim</span><span class="match-teams">UGÄN1 – SALZ3</span><span class="match-score d">5:5</span></div>
+<div class="match-note">Roman/Leonhard/Paul · Paul 2/3, Leonhard 1/3, Roman 1/3 · Doppel Leonhard/Paul 3:2 · alle 10 Spiele</div>
+</li>
+<li class="match-item">
+<div class="match-header"><span class="match-runde">DG1 · R2 · So 20.09.2026 · Heim</span><span class="match-teams">UGÄN1 – KUST2</span><span class="match-score l">3:6</span></div>
+<div class="match-note">Roman/Paul/Elias (+Leonhard ab Spiel 8) · Paul 2/3, Elias 1/2, Roman 0/3 · Endstand nach Spiel 9</div>
+</li>
+</ul>
+</div>
+<!-- ══════════════════════════ 11 ══════════════════════════ -->
+<div>
+<div class="section-label">11 — Noch ausstehende Spiele · DG1</div>
+<div class="card">
+<div class="card-header"><span class="card-title">13 offene Spiele · 2 gespielt</span></div>
+<div class="card-body">
+<div class="tscroll"><table>
+<thead><tr><th>R</th><th>Datum</th><th>H/A</th><th>Gegner</th><th>Rang</th><th>Punkte</th><th>Einschätzung</th></tr></thead>
+<tbody>
+<tr class="hl"><td class="mono">R3</td><td>Sa 03.10.2026 · 15:00</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">NFS1</td><td>2</td><td>6</td><td style="color:var(--red);font-family:var(--mono)">Schwer</td></tr>
+<tr><td class="mono">R4</td><td>Sa 24.10.2026 · 15:00</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">NFS2</td><td>15</td><td>3</td><td style="color:var(--green);font-family:var(--mono)">Schlüsselspiel!</td></tr>
+<tr><td class="mono">R5</td><td>So 25.10.2026 · 10:00</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">SGWF1</td><td>7</td><td>4</td><td style="color:var(--yellow);font-family:var(--mono)">Offen</td></tr>
+<tr><td class="mono">R6</td><td>Sa 07.11.2026 · 15:00</td><td style="color:var(--green)">Heim</td><td class="mono">KAPF2</td><td>10</td><td>3</td><td style="color:var(--yellow);font-family:var(--mono)">Offen</td></tr>
+<tr><td class="mono">R7</td><td>So 08.11.2026 · 10:00</td><td style="color:var(--green)">Heim</td><td class="mono">GRS1</td><td>16</td><td>2</td><td style="color:var(--green);font-family:var(--mono)">Schlüsselspiel!</td></tr>
+<tr><td class="mono">R8</td><td>Sa 21.11.2026 · 15:00</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">KIRB1</td><td>14</td><td>3</td><td style="color:var(--green);font-family:var(--mono)">Schlüsselspiel!</td></tr>
+<tr><td class="mono">R9</td><td>So 22.11.2026 · 10:00</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">INNS2</td><td>1</td><td>6</td><td style="color:var(--red);font-family:var(--mono)">Schwer</td></tr>
+<tr><td class="mono">R11</td><td>Fr 11.12.2026 · 19:00</td><td style="color:var(--green)">Heim</td><td class="mono">SGEB1</td><td>3</td><td>6</td><td style="color:var(--red);font-family:var(--mono)">Schwer</td></tr>
+<tr><td class="mono">R10</td><td>Sa 12.12.2026 · 15:00</td><td style="color:var(--green)">Heim</td><td class="mono">URBA1</td><td>4</td><td>5</td><td style="color:var(--red);font-family:var(--mono)">Schwer</td></tr>
+<tr><td class="mono">R12</td><td>offen</td><td style="color:var(--green)">Heim</td><td class="mono">NEUD2</td><td>11</td><td>3</td><td style="color:var(--yellow);font-family:var(--mono)">Offen</td></tr>
+<tr><td class="mono">R13</td><td>offen</td><td style="color:var(--green)">Heim</td><td class="mono">SGVH1</td><td>6</td><td>4</td><td style="color:var(--yellow);font-family:var(--mono)">Offen</td></tr>
+<tr><td class="mono">R14</td><td>offen</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">FKI1</td><td>5</td><td>5</td><td style="color:var(--red);font-family:var(--mono)">Schwer</td></tr>
+<tr><td class="mono">R15</td><td>offen</td><td style="color:var(--yellow)">Auswärts</td><td class="mono">IND1</td><td>9</td><td>4</td><td style="color:var(--yellow);font-family:var(--mono)">Offen</td></tr>
+</tbody>
+</table></div>
+<div class="analysis" style="margin-top:14px">
+<strong>Szenarien:</strong> Die drei Schlüsselspiele gegen die aktuellen Tabellennachbarn unten (<strong>NFS2, GRS1, KIRB1</strong>) entscheiden, ob UGÄN1 den Abstiegsplätzen davonziehen kann.<br/>
+<span class="good">3 Siege</span> daraus → +9 P + Antrittspunkte → Mittelfeld realistisch<br/>
+<span class="warn">1–2 Siege</span> → Kampf um Rang 11–13<br/>
+<span class="bad">0 Siege</span> → Abstiegszone<br/><br/>
+R12–R15 haben noch kein Datum in XTTV. Hinweis: R11 (SGEB1, Fr 11.12.) wird vor R10 (URBA1, Sa 12.12.) gespielt.
+</div>
+</div>
+</div>
+</div>
+</div><!-- /container -->
+</body>
+<!-- build:2026-09-27 -->
+</html>
